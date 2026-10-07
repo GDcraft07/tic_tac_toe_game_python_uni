@@ -92,28 +92,55 @@ def get_bot_move(game):
     return choice(get_empty_cells(game))
 
 
+def get_result(game):
+    '''
+    Определяет результат игры
+    '''
+    winner = find_winner(game)
+    if winner is not None:
+        return winner
+    if not get_empty_cells(game):
+        return 0
+    return None
+
+
+def draw_result(screen, result):
+    '''
+    Рисует финальное окно
+    '''
+    font = pygame.font.SysFont("arial", FONT_SIZE, bold=True)
+    text = font.render(RESULT_TEXTS[result], True, BLACK)
+    screen.fill(WHITE)
+    screen.blit(text, text.get_rect(center=(WIDTH // 2, HEIGHT // 2)))
+
+
 def main():
     pygame.init()
 
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     game = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
+    result = None
     running = True
 
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and result is None:
                 x, y = get_cell(event.pos)
                 if game[x][y] == 0:
                     game[x][y] = 1
-                    if find_winner(game) is None and get_empty_cells(game):
+                    result = get_result(game)
+                    if result is None:
                         row, col = get_bot_move(game)
                         game[row][col] = 2
+                        result = get_result(game)
 
         screen.fill(WHITE)
         draw_grid(screen)
         draw_figures(screen, game)
+        if result is not None:
+            draw_result(screen, result)
         pygame.display.flip()
 
     pygame.quit()
