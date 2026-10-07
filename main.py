@@ -126,6 +126,9 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_r:
+                game = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
+                result = None
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and result is None:
                 x, y = get_cell(event.pos)
                 if game[x][y] == 0:
